@@ -12,8 +12,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class HomeActivity extends AppCompatActivity {
 
     Button btnLogout;
-    FirebaseAuth mFirebaseAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +26,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // logs out and forwards user to Main Activity
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                Intent intent = new Intent(HomeActivity.this, SignupActivity.class);
                 startActivity(intent);
             }
         });

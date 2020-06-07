@@ -15,43 +15,32 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-public class LoginActivity extends AppCompatActivity {
-
+public class SignupActivity extends AppCompatActivity {
     EditText email, password;
-    Button btnLogin;
-    TextView tvSignUp;
+    Button btnSignUp;
+    TextView tvLogin;
     FirebaseAuth mFirebaseAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signup);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.editText);
         password = findViewById(R.id.editText2);
-        btnLogin = findViewById(R.id.button2);
-        tvSignUp = findViewById(R.id.textView);
+        btnSignUp = findViewById(R.id.button2);
+        tvLogin = findViewById(R.id.textView);
+        //handle sign up button click
+        signUp();
+        //handle sign in click
+        login();
 
-        // listen to check user state
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                if (mFirebaseUser != null) {
-                    Toast.makeText(LoginActivity.this, "You are logged in", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(LoginActivity.this, "Please Login", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        //handle login button clicked
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void signUp() {
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String mail = email.getText().toString();
@@ -66,33 +55,39 @@ public class LoginActivity extends AppCompatActivity {
                     password.requestFocus();
                 } else if (mail.isEmpty() && pwd.isEmpty()) {
                     // error message if both fields are left empty
-                    Toast.makeText(LoginActivity.this, "Fields are empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, "Fields are empty",
+                            Toast.LENGTH_SHORT).show();
                 } else if (!(mail.isEmpty() && pwd.isEmpty())) {
-                    mFirebaseAuth.signInWithEmailAndPassword(mail, pwd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    // create user and save it to firebase
+                    mFirebaseAuth.createUserWithEmailAndPassword(mail, pwd).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Login unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivity.this, "Singup unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
                             } else {
-                                // login successful, forwards to home activity which will be the main view of the app
-                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                // signup successful, forwards to home activity
+                                Intent intent = new Intent(SignupActivity.this, HomeActivity.class);
                                 startActivity(intent);
                             }
                         }
                     });
                 } else {
-                    Toast.makeText(LoginActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        //handle click text view
-        tvSignUp.setOnClickListener(new View.OnClickListener() {
+    }
+    public void login() {
+        tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+            public void onClick (View v){
+                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
     }
 
+
 }
+
+
